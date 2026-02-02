@@ -20,6 +20,7 @@ def main():
         ("test_mocked.py", "Mock-based Logic Tests"),
         ("test_import.py", "Import & Static Analysis"),
         ("test_integration.py", "Integration Tests"),
+        ("test_new_features.py", "New Features Tests"),
     ]
 
     results = []
