@@ -32,7 +32,7 @@ jobs:
           path: dist/iNaturalist-Downloader.exe
 
   build-macos-intel:
-    runs-on: macos-13  # Intel Mac
+    runs-on: macos-15-large  # Intel Mac (x86_64)
     steps:
       - uses: actions/checkout@v4
 
