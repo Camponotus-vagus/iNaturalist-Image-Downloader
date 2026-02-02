@@ -1,0 +1,118 @@
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pandas requests
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --windowed --name "iNaturalist-Downloader" --icon=NONE inaturalist_downloader.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-executable
+          path: dist/iNaturalist-Downloader.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pandas requests
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --windowed --name "iNaturalist-Downloader" inaturalist_downloader.py
+
+      - name: Create ZIP for macOS
+        run: |
+          cd dist
+          zip -r iNaturalist-Downloader-macOS.zip iNaturalist-Downloader.app || zip -r iNaturalist-Downloader-macOS.zip iNaturalist-Downloader
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-executable
+          path: dist/iNaturalist-Downloader-macOS.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pandas requests
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --name "iNaturalist-Downloader" inaturalist_downloader.py
+
+      - name: Make executable and create archive
+        run: |
+          chmod +x dist/iNaturalist-Downloader
+          cd dist
+          tar -czvf iNaturalist-Downloader-Linux.tar.gz iNaturalist-Downloader
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-executable
+          path: dist/iNaturalist-Downloader-Linux.tar.gz
+
+  upload-release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure
+        run: ls -R artifacts
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/windows-executable/iNaturalist-Downloader.exe
+            artifacts/macos-executable/iNaturalist-Downloader-macOS.zip
+            artifacts/linux-executable/iNaturalist-Downloader-Linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,5 @@
+# Development dependencies (for building executables)
+tk
+pandas
+requests
+pyinstaller
