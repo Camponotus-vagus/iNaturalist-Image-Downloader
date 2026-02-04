@@ -3,8 +3,29 @@
 [![Build Status](https://github.com/Camponotus-vagus/iNaturalist-Image-Downloader/actions/workflows/build-release.yml/badge.svg)](https://github.com/Camponotus-vagus/iNaturalist-Image-Downloader/actions)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/)
+[![No Python Required](https://img.shields.io/badge/No%20Python-Required-green.svg)](https://github.com/Camponotus-vagus/iNaturalist-Image-Downloader/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/Camponotus-vagus/iNaturalist-Image-Downloader/releases)
 
-A user-friendly, open-source GUI application for batch downloading images from iNaturalist. Simply export observation URLs to a CSV file from iNaturalist and let this tool handle the rest.
+A user-friendly, open-source GUI application for batch downloading images from iNaturalist. Simply export observation URLs to a CSV file from iNaturalist and let this tool handle the rest. Perfect for creating machine learning datasets, biodiversity research, and citizen science projects.
+
+## Why Use This Tool?
+
+| Manual Download | iNaturalist Image Downloader |
+|----------------|------------------------------|
+| Click each image individually | Batch download thousands at once |
+| No progress tracking | Real-time speed & ETA display |
+| Browser crashes on large sets | Robust retry & resume support |
+| Manual file naming | Automatic sequential naming |
+| No error handling | Graceful failure recovery |
+| Time-consuming | Set it and forget it |
+
+## Use Cases
+
+- **Machine Learning**: Build training datasets for species classification, object detection, or image segmentation models
+- **Research**: Collect reference images for taxonomic studies, morphological analysis, or phenology research
+- **Education**: Create visual guides, presentations, or teaching materials
+- **Citizen Science**: Archive observations for offline analysis or backup
+- **Conservation**: Document species for conservation assessments and monitoring
 
 ## Features
 
@@ -44,6 +65,23 @@ Download the latest release for your platform from the [Releases page](https://g
 | Linux | `inaturalist_downloader-linux` |
 
 Simply download and run - no installation required!
+
+#### macOS Users
+
+After downloading, you may need to allow the app to run due to Gatekeeper:
+
+```bash
+# Remove quarantine attribute
+xattr -d com.apple.quarantine ./inaturalist_downloader-macos-*
+
+# Make executable
+chmod +x ./inaturalist_downloader-macos-*
+
+# Run
+./inaturalist_downloader-macos-arm64
+```
+
+Or go to **System Preferences → Security & Privacy → General** and click **"Open Anyway"**.
 
 ### Option 2: Run from Source
 
@@ -151,6 +189,34 @@ The application uses the following default settings (defined in `inaturalist_dow
 | `MAX_RETRIES` | 3 | Number of retry attempts for failed downloads |
 | `RETRY_DELAY` | 2 seconds | Initial delay between retries (doubles each attempt) |
 
+## Troubleshooting
+
+### "App can't be opened" on macOS
+
+This is macOS Gatekeeper blocking unsigned apps. Use the terminal commands in the [macOS Users](#macos-users) section above, or right-click the app and select "Open".
+
+### Download speed is slow
+
+iNaturalist may rate-limit requests. The app automatically handles this with retry logic. For very large datasets (10,000+ images), consider:
+- Running downloads overnight
+- Breaking your CSV into smaller batches
+- Using a stable internet connection
+
+### Some images fail to download
+
+This is normal - some observation images may have been deleted or made private. The app will:
+- Retry failed downloads up to 3 times
+- Skip permanently failed images
+- Show a summary of successes and failures at the end
+
+### "Disk space warning"
+
+The app checks for at least 100MB of free space before downloading. Free up disk space or choose a different destination folder.
+
+### CSV file not recognized
+
+Ensure your CSV has one of the supported column names: `image_url`, `IMAGE_URL`, `Image_URL`, `url`, or `URL`.
+
 ## Development
 
 ### Running Tests
@@ -209,9 +275,33 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
+## Related Projects
+
+- **[GBIF Downloader](https://github.com/Camponotus-vagus/gbif-downloader)** - Download and filter museum specimen occurrence data from GBIF with CLI and GUI interfaces
+
+## Acknowledgments
+
+- [iNaturalist](https://www.inaturalist.org/) for providing an amazing platform for citizen science and biodiversity observation
+- All the citizen scientists who contribute observations to iNaturalist
+- The open-source community for the libraries that make this tool possible
+
 ## License
 
 This project is licensed under the GNU GPLv3 License. See the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+If you use this tool in your research, please cite:
+
+```
+iNaturalist Image Downloader (2024). https://github.com/Camponotus-vagus/iNaturalist-Image-Downloader
+```
+
+And please also cite iNaturalist for the data:
+
+```
+iNaturalist. Available from https://www.inaturalist.org. Accessed [date].
+```
 
 ## Star History
 
